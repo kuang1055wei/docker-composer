@@ -1,0 +1,6 @@
+.idea/
+
+elasticsearch/data/nodes/*
+
+redis/data/*
+
