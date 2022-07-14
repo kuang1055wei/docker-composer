@@ -1,24 +1,17 @@
 version: "1.0"
+# docker-compose up -d -f docker-compose.yml
 
 # 使用创建好的网络，而不是让docker-compose自己创建网络
 networks:
   app-net:
     name: app-net
-  kong-net:
-    driver: bridge
 
 # docker-compose 创建网卡
 #networks:
 #  app-net:
 #    driver: bridge
 
-
 services:
-#  php71:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.php71
-
   redis:
     image: bitnami/redis:latest
     container_name: redis
@@ -30,7 +23,7 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes" #允许空密码登录
     volumes:
-      -  /home/wwwroot/docker/redis/data:/bitnami/redis/data
+      -  ./redis/data:/bitnami/redis/data
 
   etcd-server:
     image: bitnami/etcd:3.4.18
@@ -58,8 +51,8 @@ services:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms128m -Xmx128m
     volumes:
-      - /home/wwwroot/docker/elasticsearch/data:/usr/share/elasticsearch/data
-      - /home/wwwroot/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 
   # es的web管理界面
   elasticsearch-head:
@@ -102,7 +95,7 @@ services:
 #    environment:
 #      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
 #    volumes:
-#      - /home/wwwroot/docker/kibana/config:/usr/share/kibana/config #配置文件挂载
+#      - ./kibana/config:/usr/share/kibana/config #配置文件挂载
 #    depends_on:
 #      - elasticsearch
 ##
@@ -134,86 +127,3 @@ services:
 #      KAFKA_HEAP_OPTS: "-Xmx256m -Xms256m"
 #    depends_on:
 #      - zookeeper
-
-#  kong-database:
-#    image: postgres:9.6
-#    restart: always  #每次总是启动
-#    networks:
-#      - kong-net
-#    environment:
-#      POSTGRES_USER: kong
-#      POSTGRES_DB: kong
-#      POSTGRES_PASSWORD: kong
-#    ports:
-#      - "5432:5432"
-#
-#  kong-migration:
-#    image: kong:latest
-#    command: "kong migrations bootstrap"
-#    networks:
-#      - kong-net
-#    restart: on-failure
-#    environment:
-#      - KONG_DATABASE=postgres
-#      - KONG_PG_DATABASE=kong
-#      - KONG_PG_PASSWORD=kong
-#      - KONG_PG_HOST=kong-database
-#    links:
-#      - kong-database #连接的是kong-database服务的
-#    depends_on:
-#      - kong-database #依赖于kong-database服务
-#
-#  kong:
-#    image: kong:latest
-#    restart: always
-#    networks:
-#      - kong-net
-#    environment:
-#      KONG_DATABASE: postgres
-#      KONG_PG_HOST: kong-database
-#      KONG_PG_PASSWORD: kong
-#      KONG_PROXY_LISTEN: 0.0.0.0:8000          # 代理监听http
-#      KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443       # 代理监听https
-#      KONG_ADMIN_LISTEN: 0.0.0.0:8001     # Kong的管理API，不可暴露在公网
-#    depends_on:
-#      - kong-migration
-#    links:
-#      - kong-database
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://kong:8001" ]
-#      interval: 5s
-#      timeout: 2s
-#      retries: 15
-#    ports:
-#      - "8001:8001"
-#      - "8000:8000"
-#      - "8443:8443"
-#
-#  konga-prepare:
-#    image: pantsel/konga:latest
-#    command: "-c prepare -a postgres -u postgresql://kong:kong@kong-database:5432/konga"  #注意是用户名：密码@数据库服务名称：端口
-#    networks:
-#      - kong-net
-#    restart: on-failure
-#    links:
-#      - kong-database
-#    depends_on:
-#      - kong        #依赖kong服务
-#      - kong-database #依赖kong-database服务
-#
-#  konga:
-#    image: pantsel/konga:latest
-#    restart: always
-#    networks:
-#      - kong-net
-#    environment:
-#      DB_ADAPTER: postgres
-#      DB_HOST: kong-database
-#      DB_USER: kong
-#      DB_DATABASE: konga
-#      DB_PASSWORD: kong #必须加上密码，不然会失败
-#    depends_on:
-#      - kong
-#      - kong-database
-#    ports:
-#      - "1337:1337" #控制台访问端口

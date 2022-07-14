@@ -4,3 +4,6 @@ elasticsearch/data/nodes/*
 
 redis/data/*
 
+mysql/data/*
+
+nginx/log/*

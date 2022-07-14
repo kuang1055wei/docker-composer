@@ -1,0 +1,59 @@
+version: "1.0"
+# docker-compose -f docker-compose-lnmp.yml -p lnmp -d up
+
+# 使用创建好的网络，而不是让docker-compose自己创建网络
+networks:
+  app-net:
+    name: app-net
+
+# docker-compose 创建网卡
+#networks:
+#  app-net:
+#    driver: bridge
+
+services:
+#  nginx:
+#    image: nginx:1.13-alpine
+#    container_name: nginx
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 8080:80 #这里端口号可以改
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+#      - ./nginx/log:/var/log/nginx
+#      - ./www:/var/www/html:ro
+#      - ./nginx/www:/usr/share/nginx/html:ro
+#
+#  mysql5.7:
+#    image: mysql:5.7.31
+#    container_name: mysql
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 3307:3306 #端口号记得改
+#    environment: # 可查看环境变量选项：https://dev.mysql.com/doc/refman/5.7/en/environment-variables.html
+#      MYSQL_ROOT_PASSWORD: "root"
+#    volumes:
+#      - ./mysql/data:/var/lib/mysql
+#    command:
+#      - "--innodb_use_native_aio=0"  #文件系统不支持aio（比如主机（win）的文件挂载到虚拟机中，虚拟机再挂载到mysql容器中），则用这个命令
+
+  php71:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php71
+    restart: always
+    networks:
+      - app-net
+    expose:
+      - 9000
+    ports:
+      - 9000:9000
+    volumes:
+      - ./php/conf.d/php.ini:/usr/local/etc/php/php.ini #配置文件挂载
+      - ./www/:/var/www/ #静态文件挂载
