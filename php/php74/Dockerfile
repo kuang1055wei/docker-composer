@@ -88,7 +88,7 @@ RUN docker-php-ext-install pdo_mysql \
 # 如果报错cc: fatal error: Killed signal terminated program cc1 参考：https://www.jianshu.com/p/a4ad05a51456
 RUN git clone https://github.com/phalcon/cphalcon.git \
     && cd cphalcon \
-    && git checkout v3.1.2 \
+    && git checkout v4.1.0 \
     && cd build/php7/64bits \
     && phpize \
     && ./configure --with-php-config=/usr/local/bin/php-config --enable-phalcon \
