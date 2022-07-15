@@ -46,6 +46,8 @@ services:
     build:
       context: ./php/php74
       dockerfile: Dockerfile
+#      labels:
+#        - "version=1.0"
     container_name: php74
     restart: always
     networks:
