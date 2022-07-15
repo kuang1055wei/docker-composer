@@ -42,9 +42,9 @@ services:
 #    command:
 #      - "--innodb_use_native_aio=0"  #文件系统不支持aio（比如主机（win）的文件挂载到虚拟机中，虚拟机再挂载到mysql容器中），则用这个命令
 
-  php71:
+  php74:
     build:
-      context: ./php
+      context: ./php/php74
       dockerfile: Dockerfile
     container_name: php74
     restart: always
