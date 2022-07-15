@@ -1,8 +1,8 @@
 FROM php:7.4-fpm
 
 # 如果有网络问题，就连接到宿主机的代理地址
-ENV http_proxy=http://172.16.17.245:7890
-ENV https_proxy=http://172.16.17.245:7890
+#ENV http_proxy=http://172.16.17.245:7890
+#ENV https_proxy=http://172.16.17.245:7890
 
 ENV DEBIAN_FRONTEND noninteractive
 
