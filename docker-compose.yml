@@ -36,7 +36,7 @@ services:
       - 2380:2380
     environment:
       ALLOW_NONE_AUTHENTICATION: "yes"
-      ETCD_ADVERTISE_CLIENT_URLS: "http://192.168.50.100:2379"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379"
 
   elasticsearch:
     image: elasticsearch:7.16.1

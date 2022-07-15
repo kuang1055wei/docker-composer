@@ -1,11 +1,25 @@
 FROM php:7.1-fpm
 
-MAINTAINER PGMAN <13538462645@163.com>
+# 如果有网络问题，就连接到宿主机的代理地址
+ENV http_proxy=http://172.16.17.245:7890
+ENV https_proxy=http://172.16.17.245:7890
 
 ENV DEBIAN_FRONTEND noninteractive
 
-#COPY temp/bin /usr/local/bin/
-#RUN chmod -R 700 /usr/local/bin/
+# 设置时区
+#ENV TZ=Asia/Shanghai
+#ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+#ADD install-php-extensions /usr/local/bin/
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+#RUN install-php-extensions @fix_letsencrypt
+#
+#RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+#    install-php-extensions bcmath bz2 calendar exif gd gettext gmp igbinary imagick memcached mongodb mysqli pcntl pdo_mysql pdo_pgsql pgsql redis shmop sockets swoole sysvmsg sysvsem sysvshm wddx xhprof xsl zip
+
+#RUN chmod +x /usr/local/bin/install-php-extensions && \
+#    install-php-extensions bcmath redis gd
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -53,12 +67,12 @@ RUN apt-get update && apt-get install -y \
 
 # 安装 PECL 拓展，安装Redis，swoole
 RUN pecl install redis \
-    && pecl install swoole \
+#    && pecl install swoole \
     && pecl install psr \
     && pecl install mongodb \
     && pecl install grpc \
     && pecl install protobuf \
-    && docker-php-ext-enable redis swoole psr mongodb grpc protobuf
+    && docker-php-ext-enable redis  psr mongodb grpc protobuf #swoole
 
 # 增加 pgsql, pdo_pgsql 扩展
 #RUN apt-get update && \
@@ -70,34 +84,29 @@ RUN pecl install redis \
 RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 
+
 # 安装 phalcon4.x 拓展
 #RUN pecl install phalcon \
 #    && docker-php-ext-enable phalcon
 
-# 安装 phalcon3.1.2 拓展 php7.4版本不确定能不能支持旧版本
-#RUN git clone https://github.com/phalcon/cphalcon.git \
-#    && cd cphalcon \
-#    && checkout v3.1.2 \
-#    && cd build/php7/64bits \
-#    && phpize \
-#    && ./configure --with-php-config=/usr/local/bin/php-config --enable-phalcon \
-#    && make \
-#    && make install \
-#    && docker-php-ext-enable phalcon
-
-# 安装 phalcon3.1.2 拓展 php7.4版本不确定能不能支持旧版本
-RUN git clone https://gitee.com/11gsq/phalcon.git \
-    && cd phalcon/build/php7/64bits \
+#这里版本号根据自己的需要更改
+# 内存不够的话 在./configure 添加 --disable-fileinfo
+RUN git clone https://github.com/phalcon/cphalcon.git \
+    && cd cphalcon \
+    && git checkout v3.1.2 \
+    && cd build/php7/64bits \
     && phpize \
-    && ./configure --with-php-config=/usr/local/bin/php-config --enable-phalcon \
-    && make && make install \
+    && ./configure --disable-fileinfo --with-php-config=/usr/local/bin/php-config --enable-phalcon \
+    && make \
+    && make install \
     && docker-php-ext-enable phalcon
 
 # 安装 yaml 拓展
-RUN pecl install yaml \
-    && docker-php-ext-enable yaml
+#RUN pecl install yaml \
+#    && docker-php-ext-enable yaml
 
 # 安装 Composer
+#RUN install-php-extensions @composer
 # Install composer and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
 	&& mv composer.phar /usr/local/bin/ \
@@ -105,6 +114,5 @@ RUN curl -sS https://getcomposer.org/installer | php \
 
 WORKDIR /data
 
-# Clean
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/*

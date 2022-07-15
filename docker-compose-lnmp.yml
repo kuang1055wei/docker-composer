@@ -46,7 +46,7 @@ services:
     build:
       context: ./php
       dockerfile: Dockerfile
-    container_name: php71
+    container_name: php74
     restart: always
     networks:
       - app-net
