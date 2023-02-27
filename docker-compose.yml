@@ -24,6 +24,9 @@ services:
       ALLOW_EMPTY_PASSWORD: "yes" #允许空密码登录
     volumes:
       -  ./redis/data:/bitnami/redis/data
+    logging:
+      options:
+        max-size: "10m"
 
   etcd-server:
     image: bitnami/etcd:3.4.18
@@ -37,6 +40,24 @@ services:
     environment:
       ALLOW_NONE_AUTHENTICATION: "yes"
       ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379"
+    logging:
+      options:
+        max-size: "10m"
+
+  #用户名：ginghan 密码：123456
+#  etcd-manage:
+#    build: ./etcd-manage/
+#    container_name: etcd-manage
+##    image: "shiguanghuxian/etcd-manage"
+#    networks:
+#      - app-net
+#    volumes:
+#      - ./etcd-manage/bin/config/cfg.toml:/app/config/cfg.toml
+#      - ./etcd-manage/bin/logs:/app/logs
+#    ports:
+#      - "10280:10280"
+#    depends_on:
+#      - etcd-server
 
   elasticsearch:
     image: elasticsearch:7.16.1
@@ -53,6 +74,9 @@ services:
     volumes:
       - ./elasticsearch/data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    logging:
+      options:
+        max-size: "10m"
 
   # es的web管理界面
   elasticsearch-head:
@@ -63,6 +87,9 @@ services:
       - app-net
     ports:
       - 9100:9100
+    logging:
+      options:
+        max-size: "10m"
 
   jaeger:
     image: jaegertracing/all-in-one
@@ -82,6 +109,9 @@ services:
       ES_SERVER_URLS: "http://elasticsearch:9200" #配置elasticsearch 作为存储
     depends_on:
       - elasticsearch
+    logging:
+      options:
+        max-size: "10m"
 
 
 #  kibana:

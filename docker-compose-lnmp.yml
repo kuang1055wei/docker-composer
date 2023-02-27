@@ -59,3 +59,6 @@ services:
     volumes:
       - ./php/conf.d/php.ini:/usr/local/etc/php/php.ini #配置文件挂载
       - ./www/:/var/www/ #静态文件挂载
+    logging:
+      options:
+        max-size: "10m"

@@ -1,9 +1,12 @@
 .idea/
 
 elasticsearch/data/nodes/*
+elasticsearch/data/java_pid7.hprof
 
 redis/data/*
 
 mysql/data/*
 
 nginx/log/*
+
+etcd-manage/bin/etcd-manage
