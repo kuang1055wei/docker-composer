@@ -41,6 +41,8 @@ services:
       - 2380:2380
     environment:
       ALLOW_NONE_AUTHENTICATION: "yes"
+      # 在测试环境可用这个配置：ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
+      # 测试服务器会导致连接错误，所以补上192.168.50.100:2379，如果完全是内网，则使用http://etcd-server:2379即可
       ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379"
     logging:
       driver: "json-file"
@@ -85,19 +87,19 @@ services:
         max-file: "3"
 
   # es的web管理界面
-  elasticsearch-head:
-    image: mobz/elasticsearch-head:5-alpine
-    container_name: elasticsearch-head
-    restart: always
-    networks:
-      - app-net
-    ports:
-      - 9100:9100
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  elasticsearch-head:
+#    image: mobz/elasticsearch-head:5-alpine
+#    container_name: elasticsearch-head
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 9100:9100
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   jaeger:
     image: jaegertracing/all-in-one
