@@ -43,7 +43,7 @@ services:
       ALLOW_NONE_AUTHENTICATION: "yes"
       # 在测试环境可用这个配置：ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
       # 测试服务器会导致连接错误，所以补上192.168.50.100:2379，如果完全是内网，则使用http://etcd-server:2379即可
-      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
     logging:
       driver: "json-file"
       options:
