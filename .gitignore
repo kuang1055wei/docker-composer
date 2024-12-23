@@ -1,7 +1,7 @@
 .idea/
 
 elasticsearch/data/nodes/*
-elasticsearch/data/java_pid7.hprof
+elasticsearch/data/*.hprof
 
 redis/data/*
 

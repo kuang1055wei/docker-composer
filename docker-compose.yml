@@ -22,33 +22,35 @@ services:
       - 6379:6379
     environment:
       ALLOW_EMPTY_PASSWORD: "yes" #允许空密码登录
+      REDIS_EXTRA_FLAGS: "--loadmodule /bitnami/redis/module/redisbloom.so" # 加载redisbloom模块
     volumes:
       -  ./redis/data:/bitnami/redis/data
+      - ./redis/module:/bitnami/redis/module
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  etcd-server:
-    image: bitnami/etcd:3.4.18
-    container_name: etcd-server
-    restart: always
-    networks:
-      - app-net
-    ports:
-      - 2379:2379
-      - 2380:2380
-    environment:
-      ALLOW_NONE_AUTHENTICATION: "yes"
-      # 在测试环境可用这个配置：ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
-      # 测试服务器会导致连接错误，所以补上192.168.50.100:2379，如果完全是内网，则使用http://etcd-server:2379即可
-      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  etcd-server:
+#    image: bitnami/etcd:3.4.18
+#    container_name: etcd-server
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 2379:2379
+#      - 2380:2380
+#    environment:
+#      ALLOW_NONE_AUTHENTICATION: "yes"
+#      # 在测试环境可用这个配置：ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
+#      # 测试服务器会导致连接错误，所以补上192.168.50.100:2379，如果完全是内网，则使用http://etcd-server:2379即可
+#      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd-server:2379,http://192.168.50.100:2379"
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   #用户名：ginghan 密码：123456
 #  etcd-manage:
@@ -65,26 +67,26 @@ services:
 #    depends_on:
 #      - etcd-server
 
-  elasticsearch:
-    image: elasticsearch:7.16.1
-    container_name: elasticsearch
-    restart: always
-    networks:
-      - app-net
-    ports:
-      - 9200:9200
-      - 9300:9300
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms256m -Xmx256m
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+#  elasticsearch:
+#    image: elasticsearch:7.16.1
+#    container_name: elasticsearch
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 9200:9200
+#      - 9300:9300
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms256m -Xmx256m
+#    volumes:
+#      - ./elasticsearch/data:/usr/share/elasticsearch/data
+#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
   # es的web管理界面
 #  elasticsearch-head:
@@ -100,30 +102,30 @@ services:
 #      options:
 #        max-size: "10m"
 #        max-file: "3"
-
-  jaeger:
-    image: jaegertracing/all-in-one
-    container_name: jaeger
-    restart: always
-    networks:
-      - app-net
-    ports:
-      - 16686:16686
-      - 14268:14268 #UDP  agent发送jaeger.thrift格式数据
-      - 5775:5775 #UDP  接收兼容zipkin的协议数据
-      - 6831:6831 #UDP  接收兼容jaeger的兼容协议
-      - 5778:5778 #http 数据量大不建议使用
-      - 9411:9411
-    environment: #如果要依赖elasticsearch，请打开下面的配置
-      SPAN_STORAGE_TYPE: "elasticsearch" #配置elasticsearch 作为存储
-      ES_SERVER_URLS: "http://elasticsearch:9200" #配置elasticsearch 作为存储
-    depends_on:
-      - elasticsearch
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+#
+#  jaeger:
+#    image: jaegertracing/all-in-one
+#    container_name: jaeger
+#    restart: always
+#    networks:
+#      - app-net
+#    ports:
+#      - 16686:16686
+#      - 14268:14268 #UDP  agent发送jaeger.thrift格式数据
+#      - 5775:5775 #UDP  接收兼容zipkin的协议数据
+#      - 6831:6831 #UDP  接收兼容jaeger的兼容协议
+#      - 5778:5778 #http 数据量大不建议使用
+#      - 9411:9411
+#    environment: #如果要依赖elasticsearch，请打开下面的配置
+#      SPAN_STORAGE_TYPE: "elasticsearch" #配置elasticsearch 作为存储
+#      ES_SERVER_URLS: "http://elasticsearch:9200" #配置elasticsearch 作为存储
+#    depends_on:
+#      - elasticsearch
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
 
 
 #  kibana:
